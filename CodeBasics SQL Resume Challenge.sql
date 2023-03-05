@@ -23,8 +23,6 @@ SELECT UNIQUE_PRODUCTS_2020,UNIQUE_PRODUCTS_2021,
 ROUND((UNIQUE_PRODUCTS_2021-UNIQUE_PRODUCTS_2020)*100.0/UNIQUE_PRODUCTS_2020,2) AS PERCENTAGE_CHG
 FROM CTE_UNIQUE_PRODUCT_2020 CROSS JOIN CTE_UNIQUE_PRODUCT_2021
 
-
-
 /*
 3. Provide a report with all the unique product counts for each segment and
 sort them in descending order of product counts. The final output contains
@@ -92,15 +90,6 @@ Month
 Year
 Gross sales Amount
 */
-
-
-
-
-
-
-
-
-
 SELECT monthname(date) as `month`,year(date) as `Year`,ROUND(sum(sales.sold_quantity*gross.gross_price),2) as 'Gross sales Amount'
 FROM gdb023.fact_sales_monthly sales INNER JOIN gdb023.fact_gross_price gross ON sales.product_code=gross.product_code 
 INNER JOIN gdb023.dim_customer cus ON sales.customer_code=cus.customer_code
@@ -154,5 +143,15 @@ rank_order
 */
 
 
-
+with cte_total_sales as(
+SELECT prod.division,prod.product_code,prod.product,sum(sales.sold_quantity) as total_sold_quantity
+FROM gdb023.dim_product prod INNER JOIN gdb023.fact_sales_monthly sales
+ON prod.product_code=sales.product_code
+WHERE sales.fiscal_year=2021
+GROUP BY 1,2,3),
+cte_top3 as (
+select cte_total_sales.division,cte_total_sales.product_code,cte_total_sales.product,cte_total_sales.total_sold_quantity,
+rank() over(partition by cte_total_sales.division order by cte_total_sales.total_sold_quantity desc) as rank_order 
+from cte_total_sales) 
+select * from cte_top3 where rank_order<=3
 
