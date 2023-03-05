@@ -13,5 +13,6 @@ To get an overview about the database look into metadata.txt.
 
 To view all the SQL Queries go to CodeBasics SQL Resume Challenge.sql
 
+To view the ad-hoc requests go to ad-hoc-requests.pdf.
 
 To view the entire report go to Consumer Goods Ad-Hoc insights for Atliq hardwares.pdf
